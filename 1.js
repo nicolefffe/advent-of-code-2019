@@ -130,8 +130,10 @@ const calculateTotalFuelWithAdditionalFuel = (moduleMasses) => {
     }, 0);
 };
 
-console.log('--- total fuel round 1 ---\n');
-console.log(calculateTotalFuel(inputs));
 
-console.log('\n--- total fuel round 2 ---\n');
-console.log(calculateTotalFuelWithAdditionalFuel(inputs));
+module.exports = {
+    main: () => {
+        // console.log(calculateTotalFuel(inputs));
+        console.log(calculateTotalFuelWithAdditionalFuel(inputs));
+    }
+}
