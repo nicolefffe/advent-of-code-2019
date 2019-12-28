@@ -1,3 +1,3 @@
-const program = require('./2.js');
+const program = require('./3.js');
 
 program.main();
