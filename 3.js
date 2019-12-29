@@ -35,18 +35,34 @@ const getMoves = (move, coordinates) => {
                 [x, y] = goLeft(i, coordinates);
                 break;
         }
-        moves.push([x, y]);
+        moves.push({
+            coord: [x, y],
+            distance: Math.abs(x) + Math.abs(y),
+        });
     }
     return moves;
 };
 
 const getPath = (directions) => {
-    let path = [[0,0]];
+    let path = [{
+        coord: [0,0],
+        distance: 0,
+    }];
     directions.forEach((move) => {
-        path = path.concat(getMoves(move, path[path.length - 1]));
+        path = path.concat(getMoves(move, path[path.length - 1].coord));
     });
     return path;
 };
+
+const getStepsForPath = (path) => {
+    return path.map((point, currentIndex) => {
+        return {
+            coord: point.coord,
+            distance: point.distance,
+            steps: currentIndex,
+        };
+    });
+}
 
 const sortPath = (path) => {
     return path.sort((a, b) => {
@@ -54,21 +70,19 @@ const sortPath = (path) => {
     });
 };
 
-const sortCoordinates = (coord1, coord2) => {
-    let distance1 = Math.abs(coord1[0]) + Math.abs(coord1[1]);
-    let distance2 = Math.abs(coord2[0]) + Math.abs(coord2[1]);
-    if (distance1 !== distance2) {
-        return distance1 - distance2;
+const sortCoordinates = (point1, point2) => {
+    if (point1.distance !== point2.distance) {
+        return point1.distance - point2.distance;
     }
-    if (coord1[0] !== coord2[0]) {
-        return coord1[0] - coord2[0];
+    if (point1.coord[0] !== point2.coord[0]) {
+        return point1.coord[0] - point2.coord[0];
     }
-    return coord1[1] - coord2[1];
-}
+    return point1.coord[1] - point2.coord[1];
+};
 
 const coordinatesAreEqual = (coord1, coord2) => {
     return coord1[0] === coord2[0] && coord1[1] === coord2[1];
-}
+};
 
 const findCoordinates = (valuesToSearch, coordToFind) => {
     let start = 1;
@@ -79,8 +93,8 @@ const findCoordinates = (valuesToSearch, coordToFind) => {
         mid = Math.floor((start + end) / 2);
         coordToTry = valuesToSearch[mid];
 
-        if (coordinatesAreEqual(coordToTry, coordToFind)) {
-            return coordToFind;
+        if (coordinatesAreEqual(coordToTry.coord, coordToFind.coord)) {
+            return coordToTry;
         }
         compare = sortCoordinates(coordToTry, coordToFind);
         if (compare < 0) {
@@ -89,7 +103,7 @@ const findCoordinates = (valuesToSearch, coordToFind) => {
             end = mid - 1;
         }
     }
-}
+};
 
 const findIntersection = (path1, path2) => {
     let shortPath, longPath;
@@ -108,12 +122,42 @@ const findIntersection = (path1, path2) => {
             return foundCoord;
         }
     }
-}
+};
 
+const findAllIntersections = (path1, path2) => {
+    let shortPath, longPath;
+    if (path1.length > path2.length) {
+        shortPath = sortPath(getStepsForPath(path2));
+        longPath = sortPath(getStepsForPath(path1));
+    } else {
+        shortPath = sortPath(getStepsForPath(path1));
+        longPath = sortPath(getStepsForPath(path2));
+    }
+
+    let foundCoord;
+    let intersections = [];
+    for (let i = 1; i < longPath.length; i++) {
+        foundCoord = findCoordinates(shortPath, longPath[i]);
+        if (foundCoord) {
+            intersections.push({
+                coord: foundCoord.coord,
+                steps: foundCoord.steps + longPath[i].steps,
+            });
+        }
+    }
+    return intersections;
+};
 
 module.exports = {
-    main: () => {
+    '1': () => {
         let intersection = findIntersection(getPath(wire1), getPath(wire2));
-        console.log(Math.abs(intersection[0]) + Math.abs(intersection[1]));
+        console.log(intersection.distance);
+    },
+    '2': () => {
+        let intersections = findAllIntersections(getPath(wire1), getPath(wire2));
+        intersections = intersections.sort((a, b) => {
+            return a.steps - b.steps;
+        });
+        console.log(intersections[0].steps);
     }
 };

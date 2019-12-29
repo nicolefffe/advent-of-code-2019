@@ -52,8 +52,10 @@ const findInputs = (values, desiredResult) => {
 
 
 module.exports = {
-    main: () => {
-        //console.log(runProgram(programValues, 12, 2)[0]);
+    '1': () => {
+        console.log(runProgram(programValues, 12, 2)[0]);
+    },
+    '2': () => {
         console.log(findInputs(programValues, 19690720));
-    }
-}
+    },
+};
