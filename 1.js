@@ -132,8 +132,10 @@ const calculateTotalFuelWithAdditionalFuel = (moduleMasses) => {
 
 
 module.exports = {
-    main: () => {
-        // console.log(calculateTotalFuel(inputs));
+    '1': () => {
+        console.log(calculateTotalFuel(inputs));
+    },
+    '2': () => {
         console.log(calculateTotalFuelWithAdditionalFuel(inputs));
-    }
-}
+    },
+};
