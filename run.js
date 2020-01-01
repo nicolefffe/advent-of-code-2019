@@ -1,11 +1,13 @@
 const day1 = require('./1.js');
 const day2 = require('./2.js');
 const day3 = require('./3.js');
+const day4 = require('./4.js');
 
 const days = {
     '1': day1,
     '2': day2,
     '3': day3,
+    '4': day4,
 };
 
 const getFlags = () => {
