@@ -16,6 +16,29 @@ const hasADouble = digits => {
     }, false);
 };
 
+const hasMaxTwoInARow = digits => {
+    let repeatingDigit = digits[0];
+    let numInARow = 1;
+    let passingRepeats = 0;
+
+    for (let i = 0; i < digits.length; i++) {
+        if (i === digits.length - 1 && numInARow === 2) {
+            passingRepeats++;
+        } else {
+            if (digits[i] === digits[i+1]) {
+                numInARow++;
+            } else {
+                if (numInARow === 2) {
+                    passingRepeats++;
+                }
+                numInARow = 1;
+            }
+            repeatingDigit = digits[i];
+        }
+    }
+    return passingRepeats > 0;
+};
+
 const hasIncreasingDigits = digits => {
     return digits.reduce((prevDigitsIncreasing, currentDigit, currentIndex, allDigits) => {
         if (currentIndex == 0) {
@@ -27,9 +50,7 @@ const hasIncreasingDigits = digits => {
     }, true);
 };
 
-const tests = [hasSixDigits, hasADouble, hasIncreasingDigits];
-
-const passesTests = number => {
+const passesTests = (tests, number) => {
     let digits = number.toString().split('');
     for (let i = 0; i < tests.length; i++) {
         let pass = tests[i](digits);
@@ -40,10 +61,10 @@ const passesTests = number => {
     return true;
 };
 
-const getPotentialPasswords = (startRange, endRange) => {
+const getPotentialPasswords = (tests, startRange, endRange) => {
     let potentialPasswords = [];
     for (let num = startRange; num <= endRange; num++) {
-        if (passesTests(num)) {
+        if (passesTests(tests, num)) {
             potentialPasswords.push(num);
         }
     }
@@ -52,7 +73,13 @@ const getPotentialPasswords = (startRange, endRange) => {
 
 module.exports = {
     '1': () => {
-        let potentialPasswords = getPotentialPasswords(inputStart, inputEnd);
+        const tests = [hasSixDigits, hasADouble, hasIncreasingDigits];
+        let potentialPasswords = getPotentialPasswords(tests, inputStart, inputEnd);
+        console.log(potentialPasswords.length);
+    },
+    '2': () => {
+        const tests = [hasSixDigits, hasMaxTwoInARow, hasIncreasingDigits];
+        let potentialPasswords = getPotentialPasswords(tests, inputStart, inputEnd);
         console.log(potentialPasswords.length);
     }
 };
